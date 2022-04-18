@@ -15,14 +15,23 @@ function montarListaProdutos(listaProdutos) {
         const button = document.createElement('button')
         const componentes = document.createElement('ol')
 
+        componentes.classList.add('olComponentes')
+
         // Adicionando dados do produto aos elementos
         img.src = produto.img;
         img.alt = produto.nome;
         h3.innerText = produto.nome;
         p.innerText = produto.preco;
         span.innerText = produto.secao;
-        componentes.innerText = produto.componentes;
         button.innerText = "Adicionar ao carrinho."
+
+        // 
+        produto.componentes.forEach((componente) => {
+            const liComponente = document.createElement('li');
+            
+            liComponente.innerText = componente;
+            componentes.appendChild(liComponente);
+        })
 
         // Adicionando o elementos para o li
         li.appendChild(img);
@@ -36,10 +45,16 @@ function montarListaProdutos(listaProdutos) {
         ul.appendChild(li);
 
         // Atualizando valor
-        button.addEventListener('click', atualizarValor);
+        button.addEventListener('click', () => {
+            atualizarValor(produto.preco);
+            adicionarCarrinho(produto.nome, produto.img, produto.preco, produto.secao);
+        }
+        );
     });
     
 }
+
+montarListaProdutos(produtos);
 
 // Selecionando botão no HTML
 const botaoMostrarHortifruti = document.querySelector('.estiloGeralBotoes--filtrarHortifruti');
@@ -68,34 +83,46 @@ botaoMostrarHortifruti.addEventListener('click', filtrarPorHortifruti);
 
 botaoBuscaPorNome.addEventListener('click', filtrarPorNome);
 
-campoBuscaPorNome.addEventListener('change', filtrarPorNome);
+campoBuscaPorNome.addEventListener('change', filtrarPorNome); 
 
 // Calculando preço total
-function atualizarValor(event) {
+function atualizarValor(preco) {
     let elementoPrecoTotal = document.querySelector('#precoTotal');
 
     let valorCompra = Number(elementoPrecoTotal.innerText);
-    let resultado = valorCompra + Number(event.target.parentNode.childNodes[2].innerText); // childNodes[2] = tag que contém o preço.
+    let resultado = valorCompra + Number(preco);
 
-    elementoPrecoTotal.innerText = resultado;
+    elementoPrecoTotal.innerText = resultado.toFixed(2);
 }
 
 // Adicionando ao carrinho
-const adicionarCarrinho = (produto) => {
-    const listCarrinho = document.querySelectorAll('.containerCarrinho ul');
+function adicionarCarrinho(nome, imgUrl, preco, categoria) {
+    const li = document.createElement('li');
+    const img = document.createElement('img');
+    const h3 = document.createElement('h3');
+    const p = document.createElement('p');
+    const span = document.createElement('span');
 
-    const arr = [];
+    h3.innerText = nome;
+    img.src = imgUrl;
+    img.alt = nome;
+    p.innerText = preco;
+    span.innerText = categoria;
 
-    listCarr.forEach(p => arr.push(Number(p.textContent)));
-    const soma = arr.reduce((acc, cv) => acc += cv, 0);
-
-    document.querySelector('#precoTotal').innerHTML = soma.toFixed(2)
+    li.appendChild(img);
+    li.appendChild(h3);
+    li.appendChild(p);
+    li.appendChild(span);
+    
+    const ul = document.querySelector('#ulCarrinho');
+    ul.appendChild(li);
+    
 }
 
 // Pesquisa por nome 
 function filtrarPorNome(event) {
-    const value = event.target.value;
-
+    const input = document.querySelector('.campoBuscaPorNome');
+    const value = input.value;
     const buscar = produtos.filter((produto) => {
         return (produto.secao.toLowerCase() === value.toLowerCase() ||
             produto.categoria.toLowerCase() === value.toLowerCase() ||
@@ -103,6 +130,7 @@ function filtrarPorNome(event) {
     })
     
     montarListaProdutos(buscar);
+  
 }
 
 

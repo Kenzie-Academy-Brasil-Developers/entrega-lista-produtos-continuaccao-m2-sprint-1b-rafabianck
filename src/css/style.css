@@ -166,3 +166,14 @@ main{
 .containerCarrinho li ol{
     display: none;
 }
+
+.olComponentes {
+    list-style-type: decimal;
+    display: flex;
+    flex-flow: column nowrap;
+
+}
+
+.olComponentes > li {
+    height: 15px;
+}
